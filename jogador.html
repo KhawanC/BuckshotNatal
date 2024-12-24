@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogador</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            width: 200px;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .button:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .vidas-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vida-bar {
+            width: 50px;
+            height: 20px;
+            background-color: red;
+            border: 2px solid white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 500px;
+            height: 600px;
+            border: 2px solid white;
+        }
+
+        .grid-item {
+            width: 90%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid white;
+        }
+
+        .top-button-container, .bottom-button-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 5px;
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-button-container">
+        <button class="button" id="subtract-life">-</button>
+        <div>
+            <h3>VIDAS</h3>
+            <div class="vidas-container" id="vidasContainer">
+            </div>
+        </div>
+        <button class="button" id="add-life">+</button>
+    </div>
+
+    <div class="grid" id="gridContainer">
+    </div>
+
+    <div class="bottom-button-container">
+        <button class="button" id="generate-items">Gerar Itens</button>
+        <div class="input-container">
+            <label for="itemQuantity">Quantidade:</label>
+            <input type="number" id="itemQuantity" min="1" max="9" value="1">
+        </div>
+    </div>
+
+    <script>
+        const vidasContainer = document.getElementById('vidasContainer');
+        const subtractLifeButton = document.getElementById('subtract-life');
+        const addLifeButton = document.getElementById('add-life');
+        const gridContainer = document.getElementById('gridContainer');
+        const generateItemsButton = document.getElementById('generate-items');
+        const itemQuantityInput = document.getElementById('itemQuantity');
+
+        const maxLives = 5;
+        const maxRepeats = 3;
+
+        function updateLives(count) {
+            vidasContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const lifeBar = document.createElement('div');
+                lifeBar.className = 'vida-bar';
+                vidasContainer.appendChild(lifeBar);
+            }
+        }
+
+        let currentLives = maxLives;
+        updateLives(currentLives);
+
+        subtractLifeButton.addEventListener('click', () => {
+            if (currentLives > 0) {
+                currentLives--;
+                updateLives(currentLives);
+            }
+        });
+
+        addLifeButton.addEventListener('click', () => {
+            if (currentLives < maxLives) {
+                currentLives++;
+                updateLives(currentLives);
+            }
+        });
+
+        function generateGridItems() {
+            const itemQuantity = Math.min(parseInt(itemQuantityInput.value, 10), 9);
+            const images = ['adrenalina.jpg', 'algemas.jpg', 'cerveja.jpg', 'cigarro.jpg', 'faca_com_serra.jpg', 'lupa.jpg', 'polarizador.jpg', 'telefone_descartavel.jpg']; // Replace with your image paths
+            const itemCounts = {};
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < itemQuantity; i++) {
+                let image;
+                let attempts = 0;
+
+                do {
+                    image = images[Math.floor(Math.random() * images.length)];
+                    attempts++;
+                } while (itemCounts[image] >= maxRepeats && attempts < 10);
+
+                itemCounts[image] = (itemCounts[image] || 0) + 1;
+
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                gridItem.style.backgroundImage = `url('./itens/${image}')`;
+
+                gridItem.addEventListener('click', () => {
+                    gridContainer.removeChild(gridItem);
+                });
+
+                gridContainer.appendChild(gridItem);
+            }
+        }
+
+        generateItemsButton.addEventListener('click', generateGridItems);
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Munições</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            width: 200px;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .button:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .ammunition-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ammunition {
+            width: 50px;
+            height: 100px;
+            border: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .ammunition.red {
+            background-color: red;
+        }
+
+        .ammunition.blue {
+            background-color: blue;
+        }
+
+        .ammunition.gray {
+            background-color: gray;
+        }
+
+        .top-button-container, .bottom-button-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .bottom-button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-button-container">
+        <div class="button" id="generate">Gerar Munições</div>
+    </div>
+
+    <div class="ammunition-container" id="ammunitionContainer">
+    </div>
+
+    <div class="bottom-button-container">
+        <div class="button" id="shuffle">Embaralhar</div>
+    </div>
+
+    <script>
+        const ammunitionContainer = document.getElementById('ammunitionContainer');
+        const generateButton = document.getElementById('generate');
+        const shuffleButton = document.getElementById('shuffle');
+
+        function generateAmmunitions() {
+            ammunitionContainer.innerHTML = '';
+
+            let redCount = 0;
+            let blueCount = 0;
+            const ammunitions = [];
+
+            for (let i = 0; i < 8; i++) {
+                let color = Math.random() > 0.5 ? 'red' : 'blue';
+                if (blueCount >= 4) {
+                    color = 'red';
+                }
+
+                if (color === 'red') redCount++;
+                if (color === 'blue') blueCount++;
+
+                const div = document.createElement('div');
+                div.className = `ammunition ${color}`;
+                div.addEventListener('click', () => {
+                    if (div.classList.contains('gray')) {
+                        div.classList.remove('gray');
+                        div.classList.add(color);
+                    } else {
+                        div.classList.remove(color);
+                        div.classList.add('gray');
+                    }
+                });
+                ammunitions.push(div);
+            }
+
+            ammunitions.forEach(ammo => ammunitionContainer.appendChild(ammo));
+        }
+
+        function shuffleAmmunitions() {
+            const children = Array.from(ammunitionContainer.children);
+            for (let i = children.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [children[i], children[j]] = [children[j], children[i]];
+            }
+            ammunitionContainer.innerHTML = '';
+            children.forEach(child => ammunitionContainer.appendChild(child));
+        }
+
+        generateButton.addEventListener('click', generateAmmunitions);
+        shuffleButton.addEventListener('click', shuffleAmmunitions);
+    </script>
+</body>
+</html>
